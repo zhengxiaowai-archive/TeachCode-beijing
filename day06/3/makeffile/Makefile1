@@ -1,0 +1,17 @@
+#生成calc
+calc:add.o sub.o main.o
+	gcc -o clac add/add.o sub/sub.o main.o
+
+#生成add.o
+add.o:add/add.c add/add.h
+	gcc -c add/add.c -o add/add.o
+
+#生成sub.o
+sub.o:sub/sub.c sub/sub.h
+	gcc -c sub/sub.c -o sub/sub.o
+
+#生成main.o
+main.o:main.c add/add.h sub/sub.h
+	gcc -c main.c -o main.o	
+clean:
+	rm -f calc add/add.o sub/sub.o main.o

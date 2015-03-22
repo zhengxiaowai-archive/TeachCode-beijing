@@ -1,0 +1,29 @@
+TARGET = calc 	#编译目标
+CFLAGS = -Wall -O2 	#编译参数
+OBJS = add/add.o sub/sub.o main.o #需要的二进制文件
+
+#简化成系统变量
+$(TARGET):$(OBJS)
+	$(CC) $^ -o $@  $(CFLAGS)  
+
+# 把*.o 的文件改成 *c
+$(OBJS):%.o:%.c  	
+#  $< 是依赖项中第一个依赖文件名   $@ 目标想中的文件名	
+	$(CC) -c $< -o $@ $(CFLAGS) 
+						  
+
+clean:
+	-$(RM) $(TARGET) $(OBJS)
+
+
+
+
+
+
+
+
+
+
+
+
+

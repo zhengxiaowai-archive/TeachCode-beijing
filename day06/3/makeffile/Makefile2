@@ -1,0 +1,31 @@
+#自定义变量
+CC = gcc 		#设置编译器
+TARGET = calc 	#编译目标
+CFLAGS = -Wall -O2 	#编译参数
+OBJS = add/add.o sub/sub.o main.o #需要的二进制文件
+RM = rm -f #clean
+
+$(TARGET):$(OBJS)
+	$(CC) -o $(TARGET) $(OBJS) $(CFLAGS)
+
+# 把*.o 的文件改成 *c
+$(OBJS):%.o:%.c  				
+	$(CC) -c $< -o $@ $(CFLAGS) 
+	#   $< 是依赖项中第一个依赖文件名
+	#   $@ 目标想中的文件名
+
+clean:
+	-$(RM) $(TARGET) $(OBJS)
+
+
+
+
+
+
+
+
+
+
+
+
+
