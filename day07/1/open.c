@@ -3,18 +3,18 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
+
 int main(int argc, char *argv[])
 {
-	int fd = open("a.txt", O_RDWR | O_CREAT, 0664);
+	int fd = open("1.txt", O_RDWR | O_CREAT | O_EXCL , 00664);
 	if(fd < 0)
 	{
-		printf("open filed!\n");
+		printf("打开失败\n");
 		return -1;
 	}
 	else
 	{
-		printf("fd = %d\n", fd);
+		printf("%d\n", fd);
 	}
-	
 	return 0;
 }
