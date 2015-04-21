@@ -1,52 +1,64 @@
+//led
 #define GPJ2CON				*((volatile unsigned long *)0xE0200280)
 #define GPJ2DAT				*((volatile unsigned long *)0xE0200284)
 
-#define GPH3CON				*( (volatile unsigned long*)0xE0200C60)
-#define GPH3DAT				*( (volatile unsigned long*)0xE0200C64)
+//key K1 GPH2_0
+#define GPH2CON     				*((volatile unsigned long *)0xE0200C40)  
+#define GPH2DAT     				*((volatile unsigned long *)0xE0200C44)  
 
-#define EXT_INT_3_CON		*( (volatile unsigned long *)0xE0200E0C )
-#define EXT_INT_3_MASK		*( (volatile unsigned long *)0xE0200F0C )
-//EXT_INT[24]  gph3_0
-#define VIC0INTSELECT 		*( (volatile unsigned long *)0xF200000C)
-#define VIC0INTENABLE 		*( (volatile unsigned long *)0xF2000010)
-#define VIC0ADDRESS         *( (volatile unsigned long *)0xF2000F00)
-#define VIC0VECTADDR24		*( (volatile unsigned long *)0xF2000160)
-
-#define EXT_INT_3_PEND      *( (volatile unsigned long *)0xE0200F4C )
-extern void key_isr(void); 
-
+//外中断0-7的中断控制寄存器 
+#define EXT_INT_2_CON       *((volatile unsigned int *)0xE0200E08)
+//外中断0-7的中断屏蔽寄存器  
+#define EXT_INT_2_MASK      *((volatile unsigned int *)0xE0200F08 )  
+//第一组矢量中断选择寄存器  
+#define VIC0INTSELECT       *((volatile unsigned int *)0xF200000C) 
+//第一组矢量中断使能寄存器 
+#define VIC0INTENABLE       *((volatile unsigned int *)0xF2000010)  
+  
+#define VIC0VECTADDR16       *((volatile unsigned int *)0xF2000140)  
+  
+#define VIC0ADDRESS         *((volatile unsigned int *)0xF2000F00)  
+//外部中断0-7的中断挂起寄存器，记录是否有中断产生
+#define EXT_INT_2_PEND       *((volatile unsigned int *)0xE0200F48 )  
+  
 void led(unsigned int count,unsigned int flag);
-void key_handle()
-{
+extern void key_isr(void); //抛出为外部可用标记，提供给.s文件使用
+  
+void key_handle()  
+{     
+
+    volatile unsigned char key_code = EXT_INT_2_PEND & 0x1;  
+      
+    VIC0ADDRESS = 0;        /* 清中断向量寄存器 */  
+    EXT_INT_2_PEND |= 1;    /* 清中断挂起寄存器 */  
+      
+    if (key_code == 1)      /* key1 */  
+        GPJ2DAT ^= 1 ;    /* toggle LED1 */  
+
+}  
+  
+int main()  
+{  
+    GPJ2CON |= (0x1 << 0 | 0x1 << 4 | 0x1 << 8 | 0x1 << 12);//配置灯
+	GPJ2DAT |= 0xF;
+    GPH2CON |= 0xF << 0;                 /* 配置K1*/  
+      
+    EXT_INT_2_CON &= ~(0xF << 0);  			/* 清空低四位*/
+    EXT_INT_2_CON |= (2 << 0);          /* 配置EXT_INT[16]为下降沿触发*/  
+    EXT_INT_2_MASK &= ~(1 << 0);                   /* 取消屏蔽外部中断EXT_INT[0]和EXT_INT[1] */  
+      
+    VIC0INTSELECT &= ~(1 << 16);                    /* 选择外部中断EXT_INT[0]和外部中断EXT_INT[1]为IRQ类型的中断 */  
+      
+    VIC0INTENABLE |= (1 << 16);                     /* 使能外部中断EXT_INT[0]和EXT_INT[1] */  
+      
+    VIC0VECTADDR16 = (int)key_isr;            
+     
 	led(1,0);
-	//VIC0ADDRESS = 0;
-	led(0,0);
+    while (1);  
+      
+    return 0;  
 }
 
-
-
-
-int main(int argc, char *argv[])
-{
-	GPJ2CON |= (0x1 << 0 | 0x1 << 4 | 0x1 << 8 | 0x1 << 12);//config led:
-	GPJ2DAT |= 0xF;//close all leds
-	GPH3CON |= (0xF);//config key_interrupt 
-	
-	EXT_INT_3_CON &= ~(0x7 << 0);//clear EXT_INT_3_CON[3]
-	EXT_INT_3_CON |=(0x2 << 0);//set EXT_INT_3_CON[3] for faling 
-	EXT_INT_3_MASK &= ~(1 << 0);//open EXT_INT[24]
-
-	VIC0INTSELECT &= ~(0x1 << 24);//open IRQ for EXT_INT[16]
-	VIC0INTENABLE |= (1 << 24);//open interrupt
-	VIC0VECTADDR24 = (int)key_isr;
-	led(3,0);
-	while(1);
-
-
-
-
-	return 0;
-}
 
 
 void led(unsigned int count,unsigned int flag)
