@@ -1,0 +1,165 @@
+
+uart.elf:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+20000000 <_start>:
+20000000:	eb000000 	bl	20000008 <main>
+
+20000004 <halt>:
+20000004:	eafffffe 	b	20000004 <halt>
+
+20000008 <main>:
+20000008:	e92d4800 	push	{fp, lr}
+2000000c:	e28db004 	add	fp, sp, #4
+20000010:	e24dd008 	sub	sp, sp, #8
+20000014:	eb000006 	bl	20000034 <uart_init>
+20000018:	eb000029 	bl	200000c4 <uart_recv_byte>
+2000001c:	e1a03000 	mov	r3, r0
+20000020:	e54b3005 	strb	r3, [fp, #-5]
+20000024:	e300019c 	movw	r0, #412	; 0x19c
+20000028:	e3420000 	movt	r0, #8192	; 0x2000
+2000002c:	eb000046 	bl	2000014c <uart_send_string>
+20000030:	eafffff8 	b	20000018 <main+0x10>
+
+20000034 <uart_init>:
+20000034:	e52db004 	push	{fp}		; (str fp, [sp, #-4]!)
+20000038:	e28db000 	add	fp, sp, #0
+2000003c:	e3003000 	movw	r3, #0
+20000040:	e34e3020 	movt	r3, #57376	; 0xe020
+20000044:	e3002000 	movw	r2, #0
+20000048:	e34e2020 	movt	r2, #57376	; 0xe020
+2000004c:	e5922000 	ldr	r2, [r2]
+20000050:	e3822022 	orr	r2, r2, #34	; 0x22
+20000054:	e5832000 	str	r2, [r3]
+20000058:	e3003008 	movw	r3, #8
+2000005c:	e34e3290 	movt	r3, #58000	; 0xe290
+20000060:	e3a02001 	mov	r2, #1
+20000064:	e5832000 	str	r2, [r3]
+20000068:	e300300c 	movw	r3, #12
+2000006c:	e34e3290 	movt	r3, #58000	; 0xe290
+20000070:	e3a02000 	mov	r2, #0
+20000074:	e5832000 	str	r2, [r3]
+20000078:	e3003000 	movw	r3, #0
+2000007c:	e34e3290 	movt	r3, #58000	; 0xe290
+20000080:	e3a02003 	mov	r2, #3
+20000084:	e5832000 	str	r2, [r3]
+20000088:	e3003004 	movw	r3, #4
+2000008c:	e34e3290 	movt	r3, #58000	; 0xe290
+20000090:	e3a02005 	mov	r2, #5
+20000094:	e5832000 	str	r2, [r3]
+20000098:	e3003028 	movw	r3, #40	; 0x28
+2000009c:	e34e3290 	movt	r3, #58000	; 0xe290
+200000a0:	e3a02023 	mov	r2, #35	; 0x23
+200000a4:	e5832000 	str	r2, [r3]
+200000a8:	e300302c 	movw	r3, #44	; 0x2c
+200000ac:	e34e3290 	movt	r3, #58000	; 0xe290
+200000b0:	e30d2ddd 	movw	r2, #56797	; 0xdddd
+200000b4:	e5832000 	str	r2, [r3]
+200000b8:	e28bd000 	add	sp, fp, #0
+200000bc:	e8bd0800 	pop	{fp}
+200000c0:	e12fff1e 	bx	lr
+
+200000c4 <uart_recv_byte>:
+200000c4:	e52db004 	push	{fp}		; (str fp, [sp, #-4]!)
+200000c8:	e28db000 	add	fp, sp, #0
+200000cc:	e3003010 	movw	r3, #16
+200000d0:	e34e3290 	movt	r3, #58000	; 0xe290
+200000d4:	e5933000 	ldr	r3, [r3]
+200000d8:	e2033001 	and	r3, r3, #1
+200000dc:	e3530000 	cmp	r3, #0
+200000e0:	0afffff9 	beq	200000cc <uart_recv_byte+0x8>
+200000e4:	e3003024 	movw	r3, #36	; 0x24
+200000e8:	e34e3290 	movt	r3, #58000	; 0xe290
+200000ec:	e5933000 	ldr	r3, [r3]
+200000f0:	e6ef3073 	uxtb	r3, r3
+200000f4:	e1a00003 	mov	r0, r3
+200000f8:	e28bd000 	add	sp, fp, #0
+200000fc:	e8bd0800 	pop	{fp}
+20000100:	e12fff1e 	bx	lr
+
+20000104 <uart_send_byte>:
+20000104:	e52db004 	push	{fp}		; (str fp, [sp, #-4]!)
+20000108:	e28db000 	add	fp, sp, #0
+2000010c:	e24dd00c 	sub	sp, sp, #12
+20000110:	e1a03000 	mov	r3, r0
+20000114:	e54b3005 	strb	r3, [fp, #-5]
+20000118:	e3003010 	movw	r3, #16
+2000011c:	e34e3290 	movt	r3, #58000	; 0xe290
+20000120:	e5933000 	ldr	r3, [r3]
+20000124:	e2033004 	and	r3, r3, #4
+20000128:	e3530000 	cmp	r3, #0
+2000012c:	0afffff9 	beq	20000118 <uart_send_byte+0x14>
+20000130:	e3003020 	movw	r3, #32
+20000134:	e34e3290 	movt	r3, #58000	; 0xe290
+20000138:	e55b2005 	ldrb	r2, [fp, #-5]
+2000013c:	e5832000 	str	r2, [r3]
+20000140:	e28bd000 	add	sp, fp, #0
+20000144:	e8bd0800 	pop	{fp}
+20000148:	e12fff1e 	bx	lr
+
+2000014c <uart_send_string>:
+2000014c:	e92d4800 	push	{fp, lr}
+20000150:	e28db004 	add	fp, sp, #4
+20000154:	e24dd010 	sub	sp, sp, #16
+20000158:	e50b0010 	str	r0, [fp, #-16]
+2000015c:	e51b3010 	ldr	r3, [fp, #-16]
+20000160:	e50b3008 	str	r3, [fp, #-8]
+20000164:	ea000006 	b	20000184 <uart_send_string+0x38>
+20000168:	e51b3008 	ldr	r3, [fp, #-8]
+2000016c:	e5d33000 	ldrb	r3, [r3]
+20000170:	e51b2008 	ldr	r2, [fp, #-8]
+20000174:	e2822001 	add	r2, r2, #1
+20000178:	e50b2008 	str	r2, [fp, #-8]
+2000017c:	e1a00003 	mov	r0, r3
+20000180:	ebffffdf 	bl	20000104 <uart_send_byte>
+20000184:	e51b3008 	ldr	r3, [fp, #-8]
+20000188:	e5d33000 	ldrb	r3, [r3]
+2000018c:	e3530000 	cmp	r3, #0
+20000190:	1afffff4 	bne	20000168 <uart_send_string+0x1c>
+20000194:	e24bd004 	sub	sp, fp, #4
+20000198:	e8bd8800 	pop	{fp, pc}
+
+Disassembly of section .rodata:
+
+2000019c <.LC0>:
+2000019c:	74212121 	strtvc	r2, [r1], #-289	; 0x121
+200001a0:	20736968 	rsbscs	r6, r3, r8, ror #18
+200001a4:	61207369 	teqvs	r0, r9, ror #6
+200001a8:	72617520 	rsbvc	r7, r1, #134217728	; 0x8000000
+200001ac:	65742074 	ldrbvs	r2, [r4, #-116]!	; 0x74
+200001b0:	0a217473 	beq	2085d384 <__bss_end__+0x8551cc>
+200001b4:	00000000 	andeq	r0, r0, r0
+
+Disassembly of section .ARM.attributes:
+
+00000000 <.ARM.attributes>:
+   0:	00002e41 	andeq	r2, r0, r1, asr #28
+   4:	61656100 	cmnvs	r5, r0, lsl #2
+   8:	01006962 	tsteq	r0, r2, ror #18
+   c:	00000024 	andeq	r0, r0, r4, lsr #32
+  10:	412d3705 	teqmi	sp, r5, lsl #14
+  14:	070a0600 	streq	r0, [sl, -r0, lsl #12]
+  18:	09010841 	stmdbeq	r1, {r0, r6, fp}
+  1c:	0c030a02 	stceq	10, cr0, [r3], {2}
+  20:	14041201 	strne	r1, [r4], #-513	; 0x201
+  24:	17011501 	strne	r1, [r1, -r1, lsl #10]
+  28:	1a011803 	bne	4603c <_start-0x1ffb9fc4>
+  2c:	Address 0x0000002c is out of bounds.
+
+
+Disassembly of section .comment:
+
+00000000 <.comment>:
+   0:	3a434347 	bcc	10d0d24 <_start-0x1ef2f2dc>
+   4:	6f662820 	svcvs	0x00662820
+   8:	57432072 	smlsldxpl	r2, r3, r2, r0
+   c:	20303132 	eorscs	r3, r0, r2, lsr r1
+  10:	636e6f43 	cmnvs	lr, #268	; 0x10c
+  14:	69776e65 	ldmdbvs	r7!, {r0, r2, r5, r6, r9, sl, fp, sp, lr}^
+  18:	65542074 	ldrbvs	r2, [r4, #-116]	; 0x74
+  1c:	20296863 	eorcs	r6, r9, r3, ror #16
+  20:	2e342e34 	mrccs	14, 1, r2, cr4, cr4, {1}
+  24:	Address 0x00000024 is out of bounds.
+

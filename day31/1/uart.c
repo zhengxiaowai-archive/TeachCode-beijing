@@ -11,7 +11,7 @@
 #define UBRDIV0 		( *((volatile unsigned long *)0xE2900028) )
 #define UDIVSLOT0 		( *((volatile unsigned long *)0xE290002C) )
 #define UTRSTAT0 		( *((volatile unsigned long *)0xE2900010) )
-#define UART_UBRDIV_VAL		35
+#define UART_UBRDIV_VAL		34
 #define UART_UDIVSLOT_VAL	0xDDDD
 
 // 初始化串口 
@@ -58,3 +58,18 @@ void uart_send_string(const char const *str)
 		uart_send_byte(*p++);
 }
 
+void uart_send_num(unsigned int num)		//发送数字
+{
+	char unit,tens,hunds,thund;
+	
+	unit = '0' + num%10;
+	tens = '0' + num/10%10;
+	hunds ='0' + num/100%10;
+	thund ='0' + num/1000%10;
+	
+	uart_send_byte(thund);
+	uart_send_byte(hunds);
+	uart_send_byte(tens);
+	uart_send_byte(unit);
+	uart_send_byte('\r\n');
+}
